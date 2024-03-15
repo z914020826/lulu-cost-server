@@ -87,6 +87,51 @@ class UserController extends Controller {
       },
     };
   }
+  async getUserInfo() {
+    const { ctx, app } = this;
+    const token = ctx.request.header.authorization;
+    const decode = app.jwt.verify(token, app.config.jwt.secret);
+    const userInfo = await ctx.service.user.getUserByName(decode.username);
+    ctx.body = {
+      code: 200,
+      msg: '获取成功',
+      data: {
+        ...userInfo,
+      },
+    };
+  }
+  async editUserInfo() {
+    const { ctx, app } = this;
+    const { signature } = ctx.request.body;
+    try {
+      let userId;
+      const token = ctx.request.header.authorization;
+      const decode = app.jwt.verify(token, app.config.jwt.secret);
+      if (!decode) return;
+      userId = decode.id;
+      const userInfo = await ctx.service.user.getUserByName(decode.username);
+      const result = await ctx.service.user.editUserInfo({
+        ...userInfo,
+        signature,
+      });
+      ctx.body = {
+        code: 200,
+        msg: '更新成功',
+        data: {
+          id: decode.id,
+          signature,
+          username: userInfo.username,
+        },
+      };
+    } catch (error) {
+      console.log(error);
+      ctx.body = {
+        code: 500,
+        msg: '更新失败',
+        data: null,
+      };
+    }
+  }
   async test() {
     const { ctx, app } = this;
     const token = ctx.request.header.authorization;
