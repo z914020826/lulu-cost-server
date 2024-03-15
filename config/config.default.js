@@ -19,6 +19,7 @@ module.exports = appInfo => {
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
+    uploadDir: 'app/public/upload',
   };
 
   config.security = {
@@ -49,6 +50,14 @@ module.exports = appInfo => {
   };
   config.jwt = {
     secret: 'LuLu',
+  };
+  config.multipart = {
+    mode: 'file',
+  };
+  config.cors = {
+    origin: '*', // 允许所有跨域访问
+    credentials: true, // 允许 Cookie 跨域跨域
+    allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
   };
 
   return {
