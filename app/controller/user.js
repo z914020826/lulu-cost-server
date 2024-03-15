@@ -102,7 +102,7 @@ class UserController extends Controller {
   }
   async editUserInfo() {
     const { ctx, app } = this;
-    const { signature } = ctx.request.body;
+    const { signature, avatar } = ctx.request.body;
     try {
       let userId;
       const token = ctx.request.header.authorization;
@@ -110,9 +110,10 @@ class UserController extends Controller {
       if (!decode) return;
       userId = decode.id;
       const userInfo = await ctx.service.user.getUserByName(decode.username);
-      const result = await ctx.service.user.editUserInfo({
+      await ctx.service.user.editUserInfo({
         ...userInfo,
         signature,
+        avatar,
       });
       ctx.body = {
         code: 200,
@@ -121,6 +122,7 @@ class UserController extends Controller {
           id: decode.id,
           signature,
           username: userInfo.username,
+          avatar,
         },
       };
     } catch (error) {
